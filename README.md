@@ -35,8 +35,3 @@ Run **Preferences: Configure Runtime Arguments** and add this fork's extension I
 ```
 
 Restart the editor after saving the file.
-
-## Acknowledgments
-
-- [jeanp413](https://github.com/jeanp413) for the original Open Remote - WSL extension.
-- [whoami730](https://github.com/whoami730) for the [WSL scripts contribution](https://github.com/ponces/open-remote-wsl/commit/aca5c2a948c400d7452c9c07220adc63cf736b20).
