@@ -17,8 +17,26 @@ export async function activate(context: vscode.ExtensionContext) {
 
     const wslManager = new WSLManager(logger);
     const remoteWSLResolver = new RemoteWSLResolver(wslManager, logger);
-    context.subscriptions.push(vscode.workspace.registerRemoteAuthorityResolver(REMOTE_WSL_AUTHORITY, remoteWSLResolver));
     context.subscriptions.push(remoteWSLResolver);
+    try {
+        if (typeof vscode.workspace.registerRemoteAuthorityResolver !== 'function') {
+            throw new Error('The resolvers API proposal is unavailable.');
+        }
+        context.subscriptions.push(vscode.workspace.registerRemoteAuthorityResolver(REMOTE_WSL_AUTHORITY, remoteWSLResolver));
+    } catch (error) {
+        if (!/resolvers/i.test(String(error)) || !/proposal/i.test(String(error))) {
+            throw error;
+        }
+        const instructions = 'Open Setup Instructions';
+        const selection = await vscode.window.showErrorMessage(
+            'Open Remote - WSL requires proposed APIs for ponces.open-remote-wsl. Add "ponces.open-remote-wsl" to "enable-proposed-api" in argv.json (Preferences: Configure Runtime Arguments), then restart the editor.',
+            instructions
+        );
+        if (selection === instructions) {
+            await vscode.env.openExternal(vscode.Uri.parse('https://github.com/ponces/open-remote-wsl#activation'));
+        }
+        throw error;
+    }
 
     const locationHistory = new RemoteLocationHistory(context);
     const locationData = getRemoteWorkspaceLocationData();

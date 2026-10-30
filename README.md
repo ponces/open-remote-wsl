@@ -19,25 +19,22 @@ Uninstall the upstream extension before installing this fork: both provide the s
 
 - `wget` or `curl` needs to be installed in the WSL distro
 
-**Activation**
+## Activation
 
-> NOTE: Not needed in VSCodium since version 1.82
+> [!IMPORTANT]
+> Unlike the upstream extension, this fork requires you to explicitly enable proposed APIs for `ponces.open-remote-wsl`, including on VSCodium 1.82 and later.
 
-Enable the extension in your `argv.json`
-
+Run **Preferences: Configure Runtime Arguments** and add this fork's extension ID to `enable-proposed-api` in your `argv.json`, preserving any existing entries:
 
 ```json
 {
-    ...
     "enable-proposed-api": [
-        ...,
-        "ponces.open-remote-wsl",
+        "ponces.open-remote-wsl"
     ]
-    ...
 }
 ```
-which you can open by running the `Preferences: Configure Runtime Arguments` command.
-The file is located in `~/.vscode-oss/argv.json`.
+
+Restart the editor after saving the file.
 
 ## Acknowledgments
 
