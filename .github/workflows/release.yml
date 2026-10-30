@@ -1,7 +1,16 @@
 name: Release
 
 on:
-  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -10,7 +19,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 22
 
       - name: Install dependencies
         run: |
@@ -25,28 +34,14 @@ jobs:
           version=$(jq --raw-output '.version' package.json)
           echo ::set-output name=version::$version
 
-      - name: Ensure new version
-        run: |
-          latest_tag=$(curl --silent -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/jeanp413/open-remote-wsl/releases/latest | jq --raw-output '.tag_name')
-          if [ "$latest_tag" = "v${{ steps.package_vsix.outputs.version }}" ]; then
-            exit 1
-          fi
-
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.package_vsix.outputs.version }}
-          token: ${{ secrets.GITHUB_TOKEN }}
           files: ${{ steps.package_vsix.outputs.vsix_path }}
-
-      # - name: Publish to MS Marketplace
-      #   run: |
-      #     npx vsce publish --packagePath ${{ steps.package_vsix.outputs.vsix_path }}
-      #   env:
-      #     VSCE_PAT: ${{ secrets.VSCE_PAT }}
 
       - name: Publish to Open VSX Registry
         run: |
-          npx ovsx publish --packagePath ${{ steps.package_vsix.outputs.vsix_path }}
+          npx --yes ovsx publish --packagePath ${{ steps.package_vsix.outputs.vsix_path }}
         env:
           OVSX_PAT: ${{ secrets.OPEN_VSX_PAT }}
