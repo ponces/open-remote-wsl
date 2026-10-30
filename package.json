@@ -2,7 +2,7 @@
 	"name": "open-remote-wsl",
 	"displayName": "Open Remote - WSL",
 	"description": "Open any folder in the Windows Subsystem for Linux (WSL).",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"publisher": "ponces",
 	"license": "MIT",
 	"repository": {
